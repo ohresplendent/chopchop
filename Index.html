@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Stamp Card</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:          #f2ede6;
+    --card:        #ffffff;
+    --primary:     #003B40;
+    --teal:        #005a62;
+    --accent:      #ff6422;
+    --gold:        #c8860a;
+    --goldbright:  #e8a800;
+    --red:         #da4040;
+    --border:      #ddd8d0;
+    --text-dark:   #1a1a1a;
+    --text-mid:    #555555;
+    --text-light:  #999999;
+    --success:     #2e7d32;
+    --error:       #da4040;
+    --radius:      20px;
+    --shadow:      0 8px 32px rgba(0,59,64,0.13);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Fredoka', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px 20px 60px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* ── FESTIVE BACKGROUND SHAPES ── */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -80px; right: -80px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,100,34,0.12), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -60px; left: -60px;
+    width: 250px; height: 250px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,59,64,0.1), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app { width: 100%; max-width: 420px; min-height: 100vh; position: relative; z-index: 1; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── FESTIVE HEADER ── */
+  .header-card {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--teal) 60%, #007a6b 100%);
+    border-radius: var(--radius);
+    padding: 34px 28px 30px;
+    color: #fff;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 40px rgba(0,59,64,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .header-card::before {
+    content: '';
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,100,34,0.2);
+  }
+  .header-card::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 50%;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  /* Festive star decorations */
+  .header-card .deco {
+    position: absolute;
+    font-size: 1.2em;
+    opacity: 0.35;
+  }
+  .header-card .deco-1 { top: 12px; right: 60px; font-size: 1.4em; opacity: 0.5; animation: twinkle 2s ease-in-out infinite; }
+  .header-card .deco-2 { top: 38px; right: 20px; font-size: 0.9em; opacity: 0.4; animation: twinkle 2.4s ease-in-out infinite 0.4s; }
+  .header-card .deco-3 { bottom: 18px; right: 36px; font-size: 1.1em; opacity: 0.4; animation: twinkle 1.8s ease-in-out infinite 0.8s; }
+  @keyframes twinkle { 0%,100%{opacity:0.2;transform:scale(0.9);}50%{opacity:0.6;transform:scale(1.1);} }
+
+  .header-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .header-icon { font-size: 2em; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+  .header-card h1 { font-family: 'Playfair Display', serif; font-size: 1.7em; font-weight: 900; line-height: 1.15; }
+  .header-card p  { font-size: 0.9em; opacity: 0.82; margin-top: 4px; }
+
+  /* ── FESTIVE BANNER (registration) ── */
+  .festive-banner {
+    background: linear-gradient(135deg, #fff8ee, #fff3e6);
+    border: 2px solid rgba(200,134,10,0.3);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.88em;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .festive-banner .fb-icon { font-size: 1.4em; }
+
+  /* ── CARD ── */
+  .card { background: var(--card); border-radius: var(--radius); padding: 26px 28px; margin-bottom: 16px; box-shadow: 0 2px 16px rgba(0,59,64,0.08); }
+
+  /* ── SECTION TITLE ── */
+  /* ── UNLOCK SCREEN ── */
+  .unlock-hero {
+    text-align: center;
+    padding: 48px 28px 36px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--teal) 60%, #007a6b 100%);
+    border-radius: var(--radius);
+    color: #fff;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 40px rgba(0,59,64,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .unlock-hero::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,100,34,0.18); }
+  .unlock-hero::after  { content: ''; position: absolute; bottom: -40px; left: -30px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,0.06); }
+  .unlock-lock { font-size: 3.5em; display: block; margin-bottom: 12px; animation: lockPulse 2s ease-in-out infinite; }
+  @keyframes lockPulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.08);} }
+  .unlock-hero h1 { font-family: 'Playfair Display', serif; font-size: 1.8em; font-weight: 900; margin-bottom: 6px; }
+  .unlock-hero p  { font-size: 0.9em; opacity: 0.82; }
+  .unlock-input {
+    width: 100%;
+    padding: 16px;
+    border: 2.5px solid var(--border);
+    border-radius: 14px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.6em;
+    font-weight: 700;
+    color: var(--text-dark);
+    letter-spacing: 0.25em;
+    text-align: center;
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .unlock-input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(0,59,64,0.12); }
+  .unlock-input.shake { animation: shake 0.4s ease; border-color: var(--error); }
+  .unlock-input.success-flash { border-color: var(--success); background: #e8f5e9; }
+
+  .section-title { font-size: 0.78em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-light); margin-bottom: 14px; }
+
+  /* ── FORM INPUT ── */
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-size: 0.84em; font-weight: 700; color: var(--text-mid); margin-bottom: 7px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .form-group input {
+    width: 100%; padding: 13px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1em; color: var(--text-dark);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  .form-group input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(0,59,64,0.1); }
+  .form-group input.error-field { border-color: var(--error); }
+
+  /* ── ROLE GRID ── */
+  .role-sub-label { font-size: 0.84em; font-weight: 700; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; display: block; }
+  .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 20px; }
+  .option-btn {
+    height: 52px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+    font-family: 'Fredoka', sans-serif;
+    font-size: 0.97em; font-weight: 600;
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 10px; text-align: center;
+  }
+  .option-btn:active { transform: scale(0.97); }
+  .option-btn.selected {
+    border-color: var(--primary);
+    background: #e4f0f1;
+    color: var(--primary);
+    font-weight: 700;
+    box-shadow: 0 0 0 3px rgba(0,59,64,0.12);
+  }
+
+  /* ── ERROR ── */
+  .error-msg { background: #fff0f0; border: 1.5px solid #f5c0c0; border-radius: 10px; padding: 11px 14px; color: var(--error); font-size: 0.88em; font-weight: 600; margin-bottom: 14px; display: none; align-items: center; gap: 8px; }
+  .error-msg.visible { display: flex; }
+
+  /* ── MAIN BUTTONS ── */
+  .btn { width: 100%; padding: 15px; border: none; border-radius: 14px; font-family: 'Fredoka', sans-serif; font-size: 1.05em; font-weight: 700; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--teal)); color: #fff; box-shadow: 0 4px 16px rgba(0,59,64,0.35); }
+  .btn-primary:hover { box-shadow: 0 6px 22px rgba(0,59,64,0.45); }
+  .btn-ghost   { background: var(--bg); color: var(--text-mid); border: 2px solid var(--border); box-shadow: none; }
+  .btn-gold    { background: linear-gradient(135deg, var(--gold), var(--goldbright)); color: #fff; box-shadow: 0 4px 16px rgba(200,134,10,0.4); font-size: 1.1em; }
+
+  /* ── PARTICIPANT HEADER ── */
+  .participant-info { display: flex; align-items: center; gap: 14px; }
+  .avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.22);
+    border: 2.5px solid rgba(255,255,255,0.45);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4em; font-weight: 900;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .p-name { font-size: 1.15em; font-weight: 700; color: #fff; }
+  .p-role { font-size: 0.82em; color: rgba(255,255,255,0.7); margin-top: 2px; }
+
+  /* ── PROGRESS ── */
+  .progress-wrap { margin-top: 16px; }
+  .progress-label { font-size: 0.8em; font-weight: 600; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .progress-bar-bg { background: rgba(255,255,255,0.2); border-radius: 99px; height: 10px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #ffd200, #ff6422); transition: width 0.5s cubic-bezier(.4,0,.2,1); width: 0%; }
+
+  /* ── STAMPS ── */
+  .stamps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+  .stamp-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .stamp-circle {
+    width: 74px; height: 74px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.9em;
+    border: 3px dashed var(--border);
+    background: var(--bg);
+    transition: all 0.4s cubic-bezier(.4,0,.2,1);
+    position: relative;
+  }
+  .stamp-circle.collected {
+    border: 3px solid var(--goldbright);
+    background: linear-gradient(135deg, var(--gold), var(--goldbright));
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(200,134,10,0.45);
+    transform: scale(1.1);
+    animation: stampPop 0.45s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes stampPop { 0%{transform:scale(0.6);opacity:0.4;}60%{transform:scale(1.18);}100%{transform:scale(1.1);opacity:1;} }
+  .stamp-label { font-size: 0.78em; font-weight: 600; color: var(--text-mid); text-align: center; }
+
+  /* ── STATION ENTRY ── */
+  .station-outer {
+    border: 2px solid var(--primary);
+    border-radius: 16px;
+    padding: 22px;
+    background: linear-gradient(135deg, #edf5f5, #f8f1e8);
+    position: relative;
+    overflow: hidden;
+  }
+  .station-outer::after {
+    content: '🎄';
+    position: absolute;
+    bottom: -4px; right: 12px;
+    font-size: 2.2em;
+    opacity: 0.12;
+    transform: rotate(8deg);
+  }
+  .station-badge {
+    display: inline-flex; align-items: center;
+    background: linear-gradient(135deg, var(--primary), var(--teal));
+    color: #fff;
+    font-size: 0.76em; font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 99px;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    margin-bottom: 14px;
+  }
+  .station-outer h3 { font-family: 'Playfair Display', serif; font-size: 1.15em; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+  .station-outer p.sub { font-size: 0.86em; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; }
+
+  /* ── CHECKPOINT PICKER ── */
+  .cp-label { font-size: 0.78em; font-weight: 700; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 9px; }
+  .cp-grid  { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+  .cp-btn {
+    height: 48px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 0.93em; font-weight: 700;
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cp-btn:active { transform: scale(0.96); }
+  .cp-btn.active { border-color: var(--accent); background: #fff3ee; color: var(--accent); box-shadow: 0 0 0 3px rgba(255,100,34,0.15); }
+  .cp-btn.done   { border-color: var(--goldbright); background: #fff9e6; color: var(--gold); cursor: default; opacity: 0.7; }
+  .cp-btn.done::after { content: ' ✓'; }
+
+  /* ── CODE INPUT ── */
+  .code-input {
+    width: 100%;
+    padding: 15px 16px;
+    border: 2.5px solid var(--primary);
+    border-radius: 12px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.4em; font-weight: 700;
+    color: var(--text-dark);
+    letter-spacing: 0.18em;
+    text-align: center;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .code-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,59,64,0.12); }
+  .code-input.shake { animation: shake 0.4s ease; border-color: var(--error); }
+  @keyframes shake { 0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);} }
+  .code-input.success-flash { border-color: var(--success); background: #e8f5e9; animation: successPulse 0.5s ease; }
+  @keyframes successPulse { 0%{box-shadow:0 0 0 0 rgba(46,125,50,0.3);}70%{box-shadow:0 0 0 10px rgba(46,125,50,0);}100%{box-shadow:0 0 0 0 rgba(46,125,50,0);} }
+
+  .btn-submit-code {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary), var(--teal));
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.05em; font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 14px rgba(0,59,64,0.3);
+    display: block;
+  }
+  .btn-submit-code:active { transform: scale(0.97); }
+  .code-hint { font-size: 0.78em; color: var(--text-light); margin-top: 8px; text-align: center; }
+
+  /* ── ALL DONE ── */
+  .all-done-banner {
+    background: linear-gradient(135deg, #fff8e6, #fff3d6);
+    border: 2px solid rgba(200,134,10,0.35);
+    border-radius: 14px;
+    padding: 22px;
+    text-align: center;
+    display: none;
+    margin-top: 16px;
+  }
+  .all-done-banner.visible { display: block; }
+  .all-done-banner .adb-emoji { font-size: 2.5em; margin-bottom: 8px; display: block; animation: wobble 1.2s ease-in-out infinite; }
+  @keyframes wobble { 0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);} }
+  .all-done-banner p { font-size: 0.95em; font-weight: 700; color: var(--gold); }
+
+  /* ── COMPLETION SCREEN ── */
+  .completion-hero {
+    text-align: center;
+    padding: 44px 28px 36px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--teal) 50%, #007a6b 100%);
+    border-radius: var(--radius);
+    color: #fff;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,59,64,0.25);
+  }
+  .completion-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 20%, rgba(255,100,34,0.22), transparent 60%);
+  }
+  .completion-hero .fireworks {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-around;
+    padding: 12px;
+    font-size: 1.5em;
+    opacity: 0.5;
+  }
+  .fw { animation: fwpop 1.5s ease-in-out infinite; }
+  .fw:nth-child(2) { animation-delay: 0.3s; }
+  .fw:nth-child(3) { animation-delay: 0.6s; }
+  .fw:nth-child(4) { animation-delay: 0.9s; }
+  @keyframes fwpop { 0%,100%{transform:scale(0.8);opacity:0.3;}50%{transform:scale(1.2);opacity:0.7;} }
+  .trophy { font-size: 4.5em; margin-bottom: 10px; display: block; animation: trophyBounce 1s ease infinite alternate; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); }
+  @keyframes trophyBounce { from{transform:translateY(0) rotate(-4deg);}to{transform:translateY(-10px) rotate(4deg);} }
+  .completion-hero h2 { font-family: 'Playfair Display', serif; font-size: 2em; font-weight: 900; margin-bottom: 8px; }
+  .completion-hero .sub { font-size: 0.95em; opacity: 0.88; }
+
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .stat-item { background: var(--card); border-radius: 14px; padding: 18px; text-align: center; box-shadow: 0 2px 10px rgba(0,59,64,0.08); }
+  .stat-item .val { font-size: 1.5em; font-weight: 700; color: var(--primary); display: block; margin-bottom: 4px; }
+  .stat-item .lbl { font-size: 0.76em; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .station-complete-list { display: flex; flex-direction: column; gap: 10px; }
+  .sc-row { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: var(--bg); border-radius: 12px; }
+  .sc-row .sc-icon { font-size: 1.3em; }
+  .sc-row .sc-text { font-weight: 600; color: var(--text-dark); font-size: 0.95em; }
+
+  /* ── CONFETTI ── */
+  .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; overflow: hidden; }
+  .confetto { position: absolute; top: -10px; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+
+  .mb16 { margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ════════════════════════
+       SCREEN 0 — UNLOCK
+  ════════════════════════ -->
+  <div class="screen active" id="screen-unlock">
+    <div class="unlock-hero">
+      <span class="deco deco-1">⭐</span>
+      <span class="deco deco-2">✨</span>
+      <span class="deco deco-3">🌟</span>
+      <span class="unlock-lock">🔒</span>
+      <h1>Event Stamp Card</h1>
+      <p>Enter the event code to get started</p>
+    </div>
+    <div class="card">
+      <p class="section-title">Event Access Code</p>
+      <input type="password" class="unlock-input" id="unlock-input"
+        placeholder="······" maxlength="10"
+        autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+        inputmode="numeric">
+      <div id="unlock-error" class="error-msg">❌ <span>Incorrect code. Please try again.</span></div>
+      <button class="btn btn-primary" id="btn-unlock">
+        <span>🔓</span> <span>Unlock</span>
+      </button>
+    </div>
+    <div style="text-align:center;margin-top:8px;">
+      <p style="font-size:0.8em;color:var(--text-light);">Get the event code from the organiser</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════
+       SCREEN 1 — REGISTRATION
+  ════════════════════════ -->
+  <div class="screen" id="screen-register">
+    <div class="header-card">
+      <span class="deco deco-1">⭐</span>
+      <span class="deco deco-2">✨</span>
+      <span class="deco deco-3">🌟</span>
+      <div class="header-title-row">
+        <span class="header-icon">🎉</span>
+        <h1>Event Stamp Card</h1>
+      </div>
+      <p>Collect all 3 stamps by visiting each station!</p>
+    </div>
+
+    <div class="festive-banner">
+      <span class="fb-icon">🎊</span>
+      <span>Visit any station in any order and collect your stamps!</span>
+    </div>
+
+    <div class="card">
+      <p class="section-title">Tell us about yourself</p>
+
+      <div class="form-group">
+        <label for="reg-nickname">Nickname</label>
+        <input type="text" id="reg-nickname" placeholder="What should we call you?" autocomplete="nickname">
+      </div>
+
+      <span class="role-sub-label">What is your role?</span>
+      <div class="option-grid">
+        <button class="option-btn" data-role="Doctor">Doctor</button>
+        <button class="option-btn" data-role="Nurse">Nurse</button>
+        <button class="option-btn" data-role="Pharmacist">Pharmacist</button>
+        <button class="option-btn" data-role="AHP">AHP</button>
+        <button class="option-btn" data-role="Administrator">Administrator</button>
+        <button class="option-btn" data-role="Ancillary">Ancillary</button>
+        <button class="option-btn" data-role="Others" style="grid-column:1/-1;">Others</button>
+      </div>
+
+      <div id="reg-error" class="error-msg">⚠️ <span id="reg-error-text">Please fill in all fields.</span></div>
+
+      <div style="background:#f0f4f4;border:1.5px solid #b0cccf;border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;">
+        <span style="font-size:1.1em;flex-shrink:0;">ℹ️</span>
+        <p style="font-size:0.82em;color:#444;line-height:1.55;margin:0;">Your <strong>nickname</strong> and <strong>role</strong> will be collected via Google Forms for event recording purposes.</p>
+      </div>
+
+      <button class="btn btn-primary" id="btn-register">
+        <span>Start My Journey</span> <span>🚀</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════
+       SCREEN 2 — STAMP CARD
+  ════════════════════════ -->
+  <div class="screen" id="screen-card">
+    <div class="header-card">
+      <span class="deco deco-1">⭐</span>
+      <span class="deco deco-2">✨</span>
+      <span class="deco deco-3">🌟</span>
+      <div class="participant-info">
+        <div class="avatar" id="avatar-letter">?</div>
+        <div>
+          <div class="p-name" id="card-name">—</div>
+          <div class="p-role" id="card-role">—</div>
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span>Progress</span>
+          <span id="progress-count">0 / 3</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stamps -->
+    <div class="card">
+      <p class="section-title">🏅 Your Stamps</p>
+      <div class="stamps-grid">
+        <div class="stamp-item">
+          <div class="stamp-circle" id="stamp-0">💭</div>
+          <div class="stamp-label">Station 1</div>
+        </div>
+        <div class="stamp-item">
+          <div class="stamp-circle" id="stamp-1">💭</div>
+          <div class="stamp-label">Station 2</div>
+        </div>
+        <div class="stamp-item">
+          <div class="stamp-circle" id="stamp-2">💭</div>
+          <div class="stamp-label">Station 3</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Code Entry -->
+    <div class="card">
+      <div class="station-outer" id="station-outer">
+        <div class="station-badge">🔑 Enter Secret Code</div>
+        <h3>Which checkpoint are you at?</h3>
+        <p class="sub">Tap your station, then enter the secret code shown there.</p>
+
+        <div class="cp-label">Select your station</div>
+        <div class="cp-grid">
+          <button class="cp-btn" id="cp-btn-0" data-cp="0">Station 1</button>
+          <button class="cp-btn" id="cp-btn-1" data-cp="1">Station 2</button>
+          <button class="cp-btn" id="cp-btn-2" data-cp="2">Station 3</button>
+        </div>
+
+        <div id="station-error" class="error-msg">❌ <span id="station-error-text">Wrong code. Try again!</span></div>
+
+        <input type="text" class="code-input" id="code-input" placeholder="Enter code here"
+          maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+
+        <button class="btn-submit-code" id="btn-submit-code">✓ Submit Code</button>
+        <p class="code-hint">Type the secret code exactly as shown at the station</p>
+      </div>
+
+      <div class="all-done-banner" id="all-done-banner">
+        <span class="adb-emoji">🎉</span>
+        <p>All stamps collected! Tap below to claim your reward!</p>
+      </div>
+    </div>
+
+    <button class="btn btn-gold mb16" id="btn-complete" style="display:none;">
+      <span>🏆</span> <span>Claim My Reward!</span>
+    </button>
+
+    <button class="btn btn-ghost mb16" id="btn-restart-card">
+      <span>↩️</span> <span>Start Over</span>
+    </button>
+  </div>
+
+  <!-- ════════════════════════
+       SCREEN 3 — COMPLETION
+  ════════════════════════ -->
+  <div class="screen" id="screen-complete">
+    <div class="completion-hero">
+      <div class="fireworks">
+        <span class="fw">🎆</span>
+        <span class="fw">✨</span>
+        <span class="fw">🎇</span>
+        <span class="fw">⭐</span>
+      </div>
+      <span class="trophy">🏆</span>
+      <h2>You Did It!</h2>
+      <p class="sub" id="complete-msg">Amazing work! All stamps collected.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="val">3 / 3</span>
+        <span class="lbl">Stamps Collected</span>
+      </div>
+      <div class="stat-item">
+        <span class="val" id="complete-time">—</span>
+        <span class="lbl">Completed At</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="section-title">🌟 All Stations Visited</p>
+      <div class="station-complete-list">
+        <div class="sc-row"><span class="sc-icon">⭐</span><span class="sc-text">Station 1 — Complete</span></div>
+        <div class="sc-row"><span class="sc-icon">⭐</span><span class="sc-text">Station 2 — Complete</span></div>
+        <div class="sc-row"><span class="sc-icon">⭐</span><span class="sc-text">Station 3 — Complete</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <button class="btn btn-ghost" id="btn-restart">
+        <span>↩️</span> <span>Start Again</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+<div class="confetti-container" id="confetti-container"></div>
+
+<script>
+/* ── UNLOCK ── */
+var UNLOCK_CODE = '180626';
+var unlocked = false;
+
+function tryUnlock() {
+  var entered = get('unlock-input').value.trim();
+  if (entered === UNLOCK_CODE) {
+    unlocked = true;
+    var input = get('unlock-input');
+    input.classList.add('success-flash');
+    get('unlock-error').classList.remove('visible');
+    setTimeout(function() { showScreen('screen-register'); }, 400);
+  } else {
+    var input = get('unlock-input');
+    input.classList.add('shake');
+    input.addEventListener('animationend', function() {
+      input.classList.remove('shake');
+    }, { once: true });
+    get('unlock-error').classList.add('visible');
+    input.value = '';
+  }
+}
+
+var state = {
+  nickname: '',
+  role: '',
+  stamps: [false, false, false],
+  selectedCp: -1,
+  completedAt: null,
+  secretCodes: ['1', '22', '333']
+};
+
+var STORAGE_KEY = 'stampcard_v3';
+
+function get(id) { return document.getElementById(id); }
+
+/* ── UNLOCK LISTENERS ── */
+function initUnlockListeners() {
+  get('btn-unlock').addEventListener('click', tryUnlock);
+  get('unlock-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') tryUnlock();
+  });
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  get(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showErr(cid, tid, msg) {
+  get(cid).classList.add('visible');
+  if (tid) get(tid).textContent = msg;
+}
+function hideErr(cid) { get(cid).classList.remove('visible'); }
+
+/* ── LOCAL STORAGE ── */
+function saveProgress() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      nickname:    state.nickname,
+      role:        state.role,
+      stamps:      state.stamps,
+      completedAt: state.completedAt ? state.completedAt.toISOString() : null
+    }));
+  } catch(e) {}
+}
+function clearProgress() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+}
+function restoreProgress() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    var d = JSON.parse(raw);
+    if (!d.nickname || !d.role) return false;
+    state.nickname    = d.nickname;
+    state.role        = d.role;
+    state.stamps      = d.stamps || [false, false, false];
+    state.completedAt = d.completedAt ? new Date(d.completedAt) : null;
+    return true;
+  } catch(e) { return false; }
+}
+
+/* ── POPULATE HEADER ── */
+function populateCardHeader() {
+  get('card-name').textContent     = state.nickname;
+  get('card-role').textContent     = state.role;
+  get('avatar-letter').textContent = state.nickname.charAt(0).toUpperCase();
+}
+
+/* ── STAMP UI ── */
+function updateStampUI() {
+  var collected = state.stamps.filter(Boolean).length;
+  get('progress-count').textContent = collected + ' / 3';
+  get('progress-bar').style.width   = ((collected / 3) * 100) + '%';
+  var emojis = ['⭐', '🌟', '✨'];
+  state.stamps.forEach(function(done, i) {
+    var circle = get('stamp-' + i);
+    if (done) {
+      circle.textContent = emojis[i];
+      circle.classList.add('collected');
+    } else {
+      circle.textContent = '💭';
+      circle.classList.remove('collected');
+    }
+  });
+}
+
+/* ── CHECKPOINT UI ── */
+function updateCpUI() {
+  for (var i = 0; i < 3; i++) {
+    var btn = get('cp-btn-' + i);
+    btn.classList.remove('active', 'done');
+    if (state.stamps[i])          btn.classList.add('done');
+    else if (state.selectedCp===i) btn.classList.add('active');
+  }
+}
+
+/* ── STATION UI ── */
+function updateStationUI() {
+  var allDone = state.stamps.every(Boolean);
+  if (allDone) {
+    get('station-outer').style.display = 'none';
+    get('all-done-banner').classList.add('visible');
+    get('btn-complete').style.display  = 'flex';
+  } else {
+    get('station-outer').style.display = 'block';
+    get('all-done-banner').classList.remove('visible');
+    get('btn-complete').style.display  = 'none';
+    updateCpUI();
+    get('code-input').value     = '';
+    get('code-input').className = 'code-input';
+    hideErr('station-error');
+  }
+}
+
+/* ── ROLE SELECTION ── */
+var selectedRole = '';
+document.querySelectorAll('.option-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.option-btn').forEach(function(b){ b.classList.remove('selected'); });
+    btn.classList.add('selected');
+    selectedRole = btn.getAttribute('data-role');
+    hideErr('reg-error');
+  });
+});
+
+/* ── CHECKPOINT SELECTION ── */
+document.querySelectorAll('.cp-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var cp = parseInt(btn.getAttribute('data-cp'));
+    if (state.stamps[cp]) return;
+    state.selectedCp = cp;
+    updateCpUI();
+    get('code-input').value     = '';
+    get('code-input').className = 'code-input';
+    hideErr('station-error');
+    get('code-input').focus();
+  });
+});
+
+/* ── REGISTRATION ── */
+get('btn-register').addEventListener('click', function() {
+  var nickname = get('reg-nickname').value.trim();
+  hideErr('reg-error');
+
+  if (!nickname) {
+    showErr('reg-error', 'reg-error-text', 'Please enter your nickname.');
+    get('reg-nickname').classList.add('error-field');
+    return;
+  }
+  if (!selectedRole) {
+    showErr('reg-error', 'reg-error-text', 'Please select your role.');
+    return;
+  }
+
+  get('reg-nickname').classList.remove('error-field');
+  state.nickname    = nickname;
+  state.role        = selectedRole;
+  state.stamps      = [false, false, false];
+  state.selectedCp  = -1;
+  state.completedAt = null;
+
+  // ── GOOGLE FORM SUBMISSION ──
+  // Update entry IDs below to match your Google Form fields:
+  //   entry.XXXXXXXXX = Nickname field ID
+  //   entry.YYYYYYYYY = Role field ID
+  var formUrl  = 'https://docs.google.com/forms/d/e/1FAIpQLSfDIAdNa4fZpBj5AZ0s7YYLthP5v-jheTBuYVwI06Ouac80SA/formResponse';
+  var formData = new FormData();
+  formData.append('entry.1808164803', nickname);    // Nickname field
+  formData.append('entry.1560012326', selectedRole); // Role field
+  fetch(formUrl, { method: 'POST', body: formData, mode: 'no-cors' }).catch(function(){});
+
+  saveProgress();
+  populateCardHeader();
+  updateStampUI();
+  updateStationUI();
+  showScreen('screen-card');
+});
+
+get('reg-nickname').addEventListener('keydown', function(e){ if(e.key==='Enter') get('btn-register').click(); });
+
+/* ── CODE SUBMISSION ── */
+function submitCode() {
+  hideErr('station-error');
+
+  if (state.selectedCp === -1) {
+    showErr('station-error', 'station-error-text', 'Please select a station first.');
+    return;
+  }
+  if (state.stamps[state.selectedCp]) {
+    showErr('station-error', 'station-error-text', 'You already collected this stamp!');
+    return;
+  }
+
+  var entered  = get('code-input').value.trim();
+  var expected = state.secretCodes[state.selectedCp];
+
+  if (!entered) {
+    showErr('station-error', 'station-error-text', 'Please enter the secret code.');
+    return;
+  }
+
+  if (entered === expected) {
+    var input = get('code-input');
+    input.classList.add('success-flash');
+    state.stamps[state.selectedCp] = true;
+    state.selectedCp = -1;
+    saveProgress();
+    updateStampUI();
+    setTimeout(function(){ updateStationUI(); }, 600);
+  } else {
+    var input = get('code-input');
+    input.classList.add('shake');
+    input.addEventListener('animationend', function(){ input.classList.remove('shake'); }, { once: true });
+    showErr('station-error', 'station-error-text', 'Wrong code — check and try again!');
+    input.select();
+  }
+}
+
+get('btn-submit-code').addEventListener('click', submitCode);
+get('code-input').addEventListener('keydown', function(e){ if(e.key==='Enter') submitCode(); });
+
+/* ── COMPLETION ── */
+get('btn-complete').addEventListener('click', function() {
+  state.completedAt = new Date();
+  saveProgress();
+  var timeStr = state.completedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  get('complete-msg').textContent  = 'Amazing work, ' + state.nickname + '! 🎉';
+  get('complete-time').textContent = timeStr;
+  showScreen('screen-complete');
+  fireConfetti();
+});
+
+/* ── RESTART SHARED FUNCTION ── */
+function doRestart() {
+  clearProgress();
+  state.nickname = ''; state.role = ''; selectedRole = '';
+  state.stamps = [false, false, false];
+  state.selectedCp = -1; state.completedAt = null;
+  get('reg-nickname').value = '';
+  get('reg-nickname').classList.remove('error-field');
+  document.querySelectorAll('.option-btn').forEach(function(b){ b.classList.remove('selected'); });
+  hideErr('reg-error');
+  unlocked = false;
+  get('unlock-input').value = '';
+  get('unlock-error').classList.remove('visible');
+  showScreen('screen-unlock');
+}
+
+/* ── RESTART ── */
+get('btn-restart').addEventListener('click', function() { doRestart(); });
+get('btn-restart-card').addEventListener('click', function() { doRestart(); });
+
+/* ── CONFETTI ── */
+function fireConfetti() {
+  var container = get('confetti-container');
+  container.innerHTML = '';
+  var colors = ['#003B40','#ff6422','#c8860a','#e8a800','#da4040','#005a62','#ffd200','#f2ede6'];
+  for (var i = 0; i < 80; i++) {
+    var el = document.createElement('div');
+    el.className = 'confetto';
+    el.style.cssText =
+      'left:'               + (Math.random()*100)                             + 'vw;'  +
+      'background:'         + colors[Math.floor(Math.random()*colors.length)] + ';'    +
+      'width:'              + (6 + Math.random()*10)                          + 'px;'  +
+      'height:'             + (6 + Math.random()*10)                          + 'px;'  +
+      'border-radius:'      + (Math.random()>0.5 ? '50%' : '3px')            + ';'    +
+      'animation-duration:' + (1.5 + Math.random()*2.5)                      + 's;'   +
+      'animation-delay:'    + (Math.random()*1)                               + 's;'   +
+      'opacity:'            + (0.75 + Math.random()*0.25)                     + ';';
+    container.appendChild(el);
+  }
+  setTimeout(function(){ container.innerHTML = ''; }, 6000);
+}
+
+/* ── AUTO-RESTORE ON LOAD ── */
+(function init() {
+  initUnlockListeners();
+  if (!restoreProgress()) return;
+  // If they have saved progress they already passed the unlock
+  unlocked = true;
+  populateCardHeader();
+  if (state.completedAt) {
+    var timeStr = state.completedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    get('complete-msg').textContent  = 'Amazing work, ' + state.nickname + '! 🎉';
+    get('complete-time').textContent = timeStr;
+    showScreen('screen-complete');
+  } else {
+    updateStampUI();
+    updateStationUI();
+    showScreen('screen-card');
+  }
+})();
+</script>
+</body>
+</html>
