@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Choosing Wisely Roadshow Passport</title>
+<title>Choosing Wisely Passport</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -424,6 +424,72 @@
   @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
 
   .mb16 { margin-bottom: 16px; }
+
+  /* ── SURVEY ── */
+  .survey-card {
+    background: linear-gradient(135deg, #f3f0ff, #ede8ff);
+    border: 2px solid #b8a9f0;
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 16px;
+  }
+  .survey-top { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .survey-top .s-icon { font-size:1.55em; }
+  .survey-top h3 { font-family:'Playfair Display',serif; font-size:1.05em; font-weight:700; color:#3d2b8e; line-height:1.2; }
+  .survey-question { font-size:0.9em; font-weight:700; color:#3d2b8e; margin-bottom:10px; line-height:1.45; }
+  .survey-hint { font-size:0.8em; color:#7060b0; margin-bottom:12px; line-height:1.4; }
+  .survey-textarea {
+    width:100%; min-height:88px; padding:13px 15px;
+    border:2px solid #b8a9f0; border-radius:12px;
+    font-family:'Fredoka',sans-serif; font-size:0.95em;
+    color:var(--text-dark); background:#fff; outline:none;
+    resize:vertical; transition:border-color 0.2s,box-shadow 0.2s;
+    display:block; margin-bottom:10px;
+  }
+  .survey-textarea:focus { border-color:#7c5cfc; box-shadow:0 0 0 3px rgba(124,92,252,0.12); }
+  .survey-textarea.shake { animation:shake 0.4s ease; border-color:var(--error); }
+  .btn-survey-submit {
+    width:100%; padding:14px;
+    background:linear-gradient(135deg,#5836e8,#7c5cfc);
+    color:#fff; border:none; border-radius:13px;
+    font-family:'Fredoka',sans-serif; font-size:1.05em; font-weight:700;
+    cursor:pointer; transition:transform 0.15s,box-shadow 0.15s;
+    box-shadow:0 4px 16px rgba(88,54,232,0.35);
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    margin-bottom:8px;
+  }
+  .btn-survey-submit:active { transform:scale(0.97); }
+  .btn-survey-skip {
+    width:100%; padding:8px; background:transparent; border:none;
+    font-family:'Fredoka',sans-serif; font-size:0.83em;
+    color:#aaa; cursor:pointer; text-decoration:underline; transition:color 0.2s;
+  }
+  .btn-survey-skip:hover { color:#888; }
+  .survey-thanks { display:none; text-align:center; padding:6px 0; }
+  .survey-thanks .st-icon { font-size:2em; display:block; margin-bottom:6px; }
+  .survey-thanks p { font-size:0.92em; color:var(--success); font-weight:700; }
+
+  .coffee-claim {
+    background:linear-gradient(135deg,#fffbea,#fff3cc);
+    border:2.5px solid #f5c400; border-radius:var(--radius);
+    padding:24px 24px 20px; text-align:center; margin-bottom:16px;
+    box-shadow:0 4px 20px rgba(200,134,10,0.18);
+  }
+  .coffee-claim .cc-icon { font-size:3em; display:block; margin-bottom:8px; animation:wobble 1.4s ease-in-out infinite; }
+  .coffee-claim h3 { font-family:'Playfair Display',serif; font-size:1.25em; font-weight:900; color:#7b4a00; margin-bottom:6px; }
+  .coffee-claim p  { font-size:0.88em; color:#9b6200; line-height:1.5; margin-bottom:0; }
+  .survey-divider {
+    height:1.5px; background:rgba(200,134,10,0.25);
+    margin:18px 0; border-radius:99px;
+  }
+  .btn-survey-reopen {
+    width:100%; padding:11px 16px; margin-top:0;
+    background:transparent; border:1.5px dashed rgba(88,54,232,0.4);
+    border-radius:12px; font-family:'Fredoka',sans-serif;
+    font-size:0.9em; font-weight:600; color:#5836e8;
+    cursor:pointer; transition:background 0.18s, border-color 0.18s;
+  }
+  .btn-survey-reopen:hover { background:rgba(88,54,232,0.06); border-color:#7c5cfc; }
 </style>
 </head>
 <body>
@@ -438,7 +504,7 @@
       <span class="deco deco-2">✨</span>
       <span class="deco deco-3">🌟</span>
       <span class="unlock-lock">🔒</span>
-      <h1>Choosing Wisely Roadshow Passport</h1>
+      <h1>Choosing Wisely Passport</h1>
       <p>Enter the event code to get started</p>
     </div>
     <div class="card">
@@ -467,14 +533,14 @@
       <span class="deco deco-3">🌟</span>
       <div class="header-title-row">
         <span class="header-icon">🎉</span>
-        <h1>Choosing Wisely Roadshow Passport</h1>
+        <h1>Choosing Wisely Passport</h1>
       </div>
-      <p>Visit the stations and collect your stamps!</p>
+      <p>Collect all 3 stamps by visiting each station!</p>
     </div>
 
     <div class="festive-banner">
       <span class="fb-icon">🎊</span>
-      <span>Visit the stations and collect your stamps!</span>
+      <span>Visit any station in any order and collect your stamps!</span>
     </div>
 
     <div class="card">
@@ -541,15 +607,15 @@
       <div class="stamps-grid">
         <div class="stamp-item">
           <div class="stamp-circle" id="stamp-0">💭</div>
-          <div class="stamp-label">DISCOVER</div>
+          <div class="stamp-label">Discover</div>
         </div>
         <div class="stamp-item">
           <div class="stamp-circle" id="stamp-1">💭</div>
-          <div class="stamp-label">EXPERIENCE</div>
+          <div class="stamp-label">Experience</div>
         </div>
         <div class="stamp-item">
           <div class="stamp-circle" id="stamp-2">💭</div>
-          <div class="stamp-label">ACT</div>
+          <div class="stamp-label">Act</div>
         </div>
       </div>
     </div>
@@ -563,9 +629,9 @@
 
         <div class="cp-label">Select your station</div>
         <div class="cp-grid">
-          <button class="cp-btn" id="cp-btn-0" data-cp="0">DISCOVER</button>
-          <button class="cp-btn" id="cp-btn-1" data-cp="1">EXPERIENCE</button>
-          <button class="cp-btn" id="cp-btn-2" data-cp="2">ACT</button>
+          <button class="cp-btn" id="cp-btn-0" data-cp="0">Discover</button>
+          <button class="cp-btn" id="cp-btn-1" data-cp="1">Experience</button>
+          <button class="cp-btn" id="cp-btn-2" data-cp="2">Act</button>
         </div>
 
         <div id="station-error" class="error-msg">❌ <span id="station-error-text">Wrong code. Try again!</span></div>
@@ -591,6 +657,7 @@
       <span>↩️</span> <span>Start Over</span>
     </button>
   </div>
+
 
   <!-- ════════════════════════
        SCREEN 3 — COMPLETION
@@ -622,9 +689,43 @@
     <div class="card">
       <p class="section-title">🌟 All Stations Visited</p>
       <div class="station-complete-list">
-        <div class="sc-row"><span class="sc-icon">⭐</span><span class="sc-text">DISCOVER — Complete</span></div>
-        <div class="sc-row"><span class="sc-icon">⭐</span><span class="sc-text">EXPERIENCE — Complete</span></div>
-        <div class="sc-row"><span class="sc-icon">⭐</span><span class="sc-text">ACT — Complete</span></div>
+        <div class="sc-row"><span class="sc-icon">⭐</span><span class="sc-text">Discover — Complete</span></div>
+        <div class="sc-row"><span class="sc-icon">⭐</span><span class="sc-text">Experience — Complete</span></div>
+        <div class="sc-row"><span class="sc-icon">⭐</span><span class="sc-text">Act — Complete</span></div>
+      </div>
+    </div>
+
+    <!-- Coffee claim + survey, all in one box -->
+    <div class="coffee-claim" id="coffee-claim">
+      <span class="cc-icon">☕</span>
+      <h3>Show This Screen to Staff</h3>
+      <p>Present this completed passport to a staff member to collect your complimentary coffee!</p>
+
+      <div class="survey-divider"></div>
+
+      <!-- Survey open state -->
+      <div id="survey-open">
+        <div class="survey-top" style="justify-content:center;">
+          <span class="s-icon">📝</span>
+          <h3 style="color:#3d2b8e;">Share Your Thoughts</h3>
+        </div>
+        <div class="survey-question">What would you like to see in upcoming engagements to better drive awareness and appropriate care practices?</div>
+        <textarea class="survey-textarea" id="survey-textarea" placeholder="Share your thoughts here…"></textarea>
+        <button class="btn-survey-submit" id="btn-survey-submit">
+          <span>✓</span> <span>Submit Feedback</span>
+        </button>
+        <button class="btn-survey-skip" id="btn-survey-skip">Skip for now</button>
+        <div class="survey-thanks" id="survey-thanks" style="display:none;">
+          <span class="st-icon">🎊</span>
+          <p>Thank you! Your response has been recorded.</p>
+        </div>
+      </div>
+
+      <!-- Survey skipped state -->
+      <div id="survey-skipped" style="display:none;">
+        <button class="btn-survey-reopen" id="btn-survey-reopen">
+          📝 I'd like to fill in the survey
+        </button>
       </div>
     </div>
 
@@ -890,8 +991,65 @@ get('btn-complete').addEventListener('click', function() {
   var timeStr = state.completedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   get('complete-msg').textContent  = 'Amazing work, ' + state.nickname + '! 🎉';
   get('complete-time').textContent = timeStr;
+  resetCompletionScreen();
   showScreen('screen-complete');
   fireConfetti();
+});
+
+/* ── SURVEY (on completion screen) ── */
+var SURVEY_FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSfsJDiUTlzy1G_eXE_G0VvdIP2Z0O3VrkwrXypCelNaVfOhbg/formResponse';
+var SURVEY_ENTRY = 'entry.718259072';
+
+function resetCompletionScreen() {
+  get('survey-open').style.display       = 'block';
+  get('survey-skipped').style.display    = 'none';
+  get('survey-textarea').value           = '';
+  get('survey-textarea').className       = 'survey-textarea';
+  get('btn-survey-submit').style.display = 'flex';
+  get('btn-survey-skip').style.display   = 'block';
+  get('survey-thanks').style.display     = 'none';
+  get('coffee-claim').style.display      = 'block';
+}
+
+function postSurveyToGoogle(answer) {
+  var iframe = document.createElement('iframe');
+  iframe.name = 'survey-iframe-' + Date.now();
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+  var form = document.createElement('form');
+  form.method = 'POST'; form.action = SURVEY_FORM_ACTION; form.target = iframe.name;
+  var field = document.createElement('input');
+  field.type = 'hidden'; field.name = SURVEY_ENTRY; field.value = answer;
+  form.appendChild(field);
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(function(){ document.body.removeChild(form); }, 3000);
+}
+
+get('btn-survey-submit').addEventListener('click', function() {
+  var answer = get('survey-textarea').value.trim();
+  if (!answer) {
+    var ta = get('survey-textarea');
+    ta.classList.add('shake');
+    ta.addEventListener('animationend', function(){ ta.classList.remove('shake'); }, { once: true });
+    ta.focus();
+    return;
+  }
+  postSurveyToGoogle(answer);
+  get('btn-survey-submit').style.display = 'none';
+  get('btn-survey-skip').style.display   = 'none';
+  get('survey-thanks').style.display     = 'block';
+});
+
+get('btn-survey-skip').addEventListener('click', function() {
+  get('survey-open').style.display    = 'none';
+  get('survey-skipped').style.display = 'block';
+});
+
+get('btn-survey-reopen').addEventListener('click', function() {
+  get('survey-skipped').style.display = 'none';
+  get('survey-open').style.display    = 'block';
+  get('survey-textarea').focus();
 });
 
 /* ── RESTART SHARED FUNCTION ── */
@@ -947,6 +1105,7 @@ function fireConfetti() {
     var timeStr = state.completedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     get('complete-msg').textContent  = 'Amazing work, ' + state.nickname + '! 🎉';
     get('complete-time').textContent = timeStr;
+    resetCompletionScreen();
     showScreen('screen-complete');
   } else {
     updateStampUI();
